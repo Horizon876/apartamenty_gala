@@ -144,27 +144,24 @@ const Contact = () => {
           </motion.div>
         </div>
 
-        {/* Map Placeholder */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="h-[500px] w-full bg-brand-anthracite/5 relative overflow-hidden group"
+          className="h-[500px] w-full bg-brand-anthracite/5 relative overflow-hidden shadow-2xl"
         >
-          <div className="absolute inset-0 bg-brand-anthracite/10 group-hover:bg-transparent transition-colors duration-700"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center p-8 bg-white/90 backdrop-blur-md shadow-2xl">
-              <MapPin className="w-12 h-12 text-brand-gold mx-auto mb-4" />
-              <h3 className="text-2xl font-serif text-brand-anthracite mb-2">Znajdź nas na mapie</h3>
-              <p className="text-brand-anthracite/60 font-light mb-6">ul. Mickiewicza 12, Rudnik nad Sanem</p>
-              <button className="px-8 py-3 border border-brand-gold text-brand-gold uppercase tracking-widest text-[10px] hover:bg-brand-gold hover:text-white transition-all">
-                Otwórz w Mapach Google
-              </button>
-            </div>
-          </div>
-          {/* In a real scenario, an iframe or map component would go here */}
-          <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-20 grayscale"></div>
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1285.9716768770452!2d19.798763715342574!3d49.8623087099457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47166503358d8c67%3A0x88bead5e27844ec9!2sApartamenty%20Gala!5e0!3m2!1spl!2spl!4v1778347326787!5m2!1spl!2spl" 
+            width="100%" 
+            height="100%" 
+            style={{ border: 0 }} 
+            allowFullScreen="" 
+            loading="lazy" 
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Mapa Google - Apartamenty Gala"
+            className="w-full h-full transition-all duration-700"
+          ></iframe>
         </motion.div>
       </div>
     </div>
