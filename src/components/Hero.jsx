@@ -13,7 +13,7 @@ const Hero = ({ onOpenBooking }) => {
         className="absolute inset-0 z-0"
       >
         <img 
-          src="/images/strona_glowna.png" 
+          src="/images/strona_glowna.webp" 
           alt="Luxury Apartment Interior" 
           className="w-full h-full object-cover brightness-[0.7]"
         />

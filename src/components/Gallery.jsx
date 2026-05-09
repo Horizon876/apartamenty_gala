@@ -3,22 +3,22 @@ import { motion } from 'framer-motion';
 
 const Gallery = () => {
   const images = [
-    { src: '/images/galeria/115292949.jpg', title: 'Komfort', size: 'large' },
-    { src: '/images/galeria/126303184.jpg', title: 'Design', size: 'small' },
-    { src: '/images/galeria/126303188.jpg', title: 'Spokój', size: 'small' },
-    { src: '/images/galeria/403060119.jpg', title: 'Wnętrza', size: 'medium' },
-    { src: '/images/galeria/403060141.jpg', title: 'Detale', size: 'medium' },
-    { src: '/images/galeria/403060273.jpg', title: 'Styl', size: 'small' },
-    { src: '/images/galeria/403060532.jpg', title: 'Odpoczynek', size: 'large' },
-    { src: '/images/galeria/403073357.jpg', title: 'Relaks', size: 'small' },
-    { src: '/images/galeria/403073398.jpg', title: 'Harmonia', size: 'medium' },
-    { src: '/images/galeria/403073465.jpg', title: 'Cisza', size: 'small' },
-    { src: '/images/galeria/403073534.jpg', title: 'Przestrzeń', size: 'medium' },
-    { src: '/images/galeria/403073645.jpg', title: 'Elegancja', size: 'small' },
-    { src: '/images/galeria/403073791.jpg', title: 'Światło', size: 'large' },
-    { src: '/images/galeria/403073869.jpg', title: 'Atmosfera', size: 'small' },
-    { src: '/images/galeria/403073873.jpg', title: 'Jakość', size: 'medium' },
-    { src: '/images/galeria/1238750.jpg', title: 'Natura', size: 'small' },
+    { src: '/images/galeria/115292949.webp', title: 'Komfort', size: 'large' },
+    { src: '/images/galeria/126303184.webp', title: 'Design', size: 'small' },
+    { src: '/images/galeria/126303188.webp', title: 'Spokój', size: 'small' },
+    { src: '/images/galeria/403060119.webp', title: 'Wnętrza', size: 'medium' },
+    { src: '/images/galeria/403060141.webp', title: 'Detale', size: 'medium' },
+    { src: '/images/galeria/403060273.webp', title: 'Styl', size: 'small' },
+    { src: '/images/galeria/403060532.webp', title: 'Odpoczynek', size: 'large' },
+    { src: '/images/galeria/403073357.webp', title: 'Relaks', size: 'small' },
+    { src: '/images/galeria/403073398.webp', title: 'Harmonia', size: 'medium' },
+    { src: '/images/galeria/403073465.webp', title: 'Cisza', size: 'small' },
+    { src: '/images/galeria/403073534.webp', title: 'Przestrzeń', size: 'medium' },
+    { src: '/images/galeria/403073645.webp', title: 'Elegancja', size: 'small' },
+    { src: '/images/galeria/403073791.webp', title: 'Światło', size: 'large' },
+    { src: '/images/galeria/403073869.webp', title: 'Atmosfera', size: 'small' },
+    { src: '/images/galeria/403073873.webp', title: 'Jakość', size: 'medium' },
+    { src: '/images/galeria/1238750.webp', title: 'Natura', size: 'small' },
   ];
 
   const containerVariants = {

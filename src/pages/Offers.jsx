@@ -71,6 +71,7 @@ const Offers = () => {
                 <img 
                   src={hall.image} 
                   alt={hall.name}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-6 left-6 bg-brand-anthracite/80 backdrop-blur-sm text-brand-off-white px-6 py-2 text-xs uppercase tracking-widest">

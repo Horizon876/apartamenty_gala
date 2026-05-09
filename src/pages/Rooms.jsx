@@ -6,27 +6,27 @@ const Rooms = () => {
     {
       title: "Pokój Jednoosobowy",
       description: "Komfortowa przestrzeń dla podróżujących solo. Zapewnia spokój i wszystkie niezbędne udogodnienia do pracy i odpoczynku.",
-      image: "/images/rooms/single.png"
+      image: "/images/rooms/single.webp"
     },
     {
       title: "Pokój Dwuosobowy Standard",
       description: "Klasyczny wybór dla par. Eleganckie wykończenie i przytulna atmosfera gwarantująca relaks.",
-      image: "/images/rooms/double_standard.png"
+      image: "/images/rooms/double_standard.webp"
     },
     {
       title: "Pokój Trzyosobowy",
       description: "Przestronne wnętrze idealne dla rodzin lub grup znajomych. Połączenie funkcjonalności z luksusowym stylem.",
-      image: "/images/rooms/triple.png"
+      image: "/images/rooms/triple.webp"
     },
     {
       title: "Pokój Czteroosobowy",
       description: "Nasze największe pokoje, zapewniające swobodę i wygodę dla większych grup lub rodzin.",
-      image: "/images/rooms/quadruple.png"
+      image: "/images/rooms/quadruple.webp"
     },
     {
       title: "Studio Trzyosobowe",
       description: "Wyjątkowy układ pomieszczeń zapewniający dodatkową prywatność i przestrzeń. Idealne na dłuższe pobyty.",
-      image: "/images/rooms/studio_triple.png"
+      image: "/images/rooms/studio_triple.webp"
     }
   ];
 
@@ -61,6 +61,7 @@ const Rooms = () => {
                 <img
                   src={room.image}
                   alt={room.title}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
               </div>

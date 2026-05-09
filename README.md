@@ -1,16 +1,67 @@
-# React + Vite
+# Apartamenty Gala - Rudnik
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ekskluzywna strona internetowa dla **Apartamenty Gala** w Rudniku. Nowoczesny, minimalistyczny design typu "Modern Classic" stworzony z myślą o segmencie premium.
 
-Currently, two official plugins are available:
+## 🚀 Technologia
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Strona została zbudowana przy użyciu najnowocześniejszych rozwiązań webowych:
 
-## React Compiler
+- **React 19** – Główny framework UI.
+- **Vite** – Błyskawiczne środowisko deweloperskie i build tool.
+- **Tailwind CSS 4** – Nowoczesne, wydajne stylowanie oparte na tokenach.
+- **Framer Motion** – Płynne, responsywne animacje (scroll-triggered).
+- **Lucide React** – Lekki i spójny zestaw ikon.
+- **React Router 7** – Zaawansowana nawigacja i routing.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Kluczowe Funkcje
 
-## Expanding the ESLint configuration
+- **Premium Design** – Asymetryczne układy, elegancka typografia i wyselekcjonowana paleta barw (kremy, bordo).
+- **Responsywność** – Pełna optymalizacja pod urządzenia mobilne, tablety i desktopy.
+- **Sekcje tematyczne**:
+    - Ekskluzywny Hero z dynamiczną typografią.
+    - Sekcja "O nas" prezentująca historię i walory obiektu.
+    - Przegląd luksusowych pokoi i apartamentów.
+    - Oferta imprez okolicznościowych i konferencji.
+    - Galeria zdjęć wysokiej jakości.
+    - Interaktywny moduł kontaktowy z mapą.
+- **SEO & Performance** – Optymalizacja pod kątem wyszukiwarek i szybkości ładowania (Core Web Vitals).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Instalacja i Uruchomienie
+
+1. **Sklonuj repozytorium**:
+   ```bash
+   git clone [url-repozytorium]
+   cd apartamenty-gala
+   ```
+
+2. **Zainstaluj zależności**:
+   ```bash
+   npm install
+   ```
+
+3. **Uruchom serwer deweloperski**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Budowanie wersji produkcyjnej**:
+   ```bash
+   npm run build
+   ```
+
+## 📸 Optymalizacja Mediów
+
+Projekt zawiera autorski skrypt `optimize-images.js` oparty na bibliotece **Sharp**, który automatycznie konwertuje obrazy JPG/PNG do nowoczesnego formatu **WebP**, znacząco redukując wagę strony bez utraty jakości.
+
+Aby zoptymalizować nowe zdjęcia:
+```bash
+node optimize-images.js
+```
+
+## ✒️ Autorzy i Design
+
+- **Design & Realizacja**: web2sell
+- **Lokalizacja**: Rudnik, Małopolska
+
+---
+© 2026 Hotel Gala. Wszystkie prawa zastrzeżone.

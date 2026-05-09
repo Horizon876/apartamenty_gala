@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const About = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
-    "/images/dynamiczna_galeria_poznaj/1.jpg",
-    "/images/dynamiczna_galeria_poznaj/2.jpg",
-    "/images/dynamiczna_galeria_poznaj/3.jpg"
+    "/images/dynamiczna_galeria_poznaj/1.webp",
+    "/images/dynamiczna_galeria_poznaj/2.webp",
+    "/images/dynamiczna_galeria_poznaj/3.webp"
   ];
 
   useEffect(() => {
@@ -88,6 +88,7 @@ const About = () => {
                     exit={{ opacity: 0, scale: 1.05 }}
                     transition={{ duration: 1.5, ease: "easeInOut" }}
                     className="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </AnimatePresence>
               </div>
