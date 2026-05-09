@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-off-white: #F9F7F2;
+  --color-brand-anthracite: #1A1A1A;
+  --color-brand-gold: #D4B996;
+  --color-brand-burgundy: #80211F;
+  --color-brand-cream: #FAF5EF;
+  --color-brand-logo-beige: #f2e6d9;
+  --color-brand-logo-beige-dark: #e5d4c3;
+
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Montserrat", sans-serif;
+
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-default: 4px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-off-white);
+    color: var(--color-brand-anthracite);
+    font-family: var(--font-sans);
+    @apply antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
+}
+
+@layer components {
+  .btn-ghost {
+    @apply border border-brand-anthracite px-8 py-3 uppercase tracking-widest text-sm transition-all duration-300;
+    color: var(--color-brand-anthracite);
+  }
+  
+  .btn-ghost:hover {
+    background-color: var(--color-brand-anthracite);
+    color: var(--color-brand-off-white);
+  }
+
+  .btn-premium {
+    background-color: var(--color-brand-gold);
+    color: var(--color-brand-off-white);
+    @apply px-8 py-3 uppercase tracking-widest text-sm transition-all duration-300;
+  }
+  
+  .btn-premium:hover {
+    background-color: var(--color-brand-burgundy);
+  }
+}
+
+/* Custom transitions */
+.page-transition {
+  transition: opacity 0.8s ease-in-out;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-brand-off-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(212, 185, 150, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 185, 150, 0.5);
+}
