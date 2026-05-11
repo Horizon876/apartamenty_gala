@@ -2,16 +2,22 @@ import { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 const prisma = new PrismaClient();
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+  email: z.string().email().max(100),
+  password: z.string().max(100),
 });
 
 export async function authRoutes(fastify: FastifyInstance) {
-  fastify.post('/auth/login', {
+  const server = fastify.withTypeProvider<ZodTypeProvider>();
+
+  server.post('/auth/login', {
+    schema: {
+      body: loginSchema,
+    },
     config: {
       rateLimit: {
         max: 5,
@@ -19,7 +25,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       }
     }
   }, async (request, reply) => {
-    const body = loginSchema.parse(request.body);
+    const body = request.body;
 
     const user = await prisma.user.findUnique({
       where: { email: body.email },
@@ -40,7 +46,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       email: user.email,
       role: user.role,
       name: user.name,
-    });
+    }, { expiresIn: '12h' }); // Token expires in 12 hours
 
     reply.setCookie('token', token, {
       path: '/',

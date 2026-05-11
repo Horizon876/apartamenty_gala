@@ -5,6 +5,7 @@ import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 import helmet from '@fastify/helmet';
 import { PrismaClient } from '@prisma/client';
+import { serializerCompiler, validatorCompiler, ZodTypeProvider, hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod';
 import { bookingRoutes } from './routes/bookings';
 import { authRoutes } from './routes/auth';
 import { adminRoutes } from './routes/admin';
@@ -17,7 +18,11 @@ const fastify = Fastify({
       target: 'pino-pretty'
     }
   } : true,
-});
+}).withTypeProvider<ZodTypeProvider>();
+
+// Konfiguracja Zod w Fastify
+fastify.setValidatorCompiler(validatorCompiler);
+fastify.setSerializerCompiler(serializerCompiler);
 
 fastify.register(helmet);
 
@@ -35,6 +40,7 @@ fastify.register(jwt, {
 
 fastify.register(cookie);
 fastify.register(rateLimit, {
+  global: true,
   max: 100,
   timeWindow: '1 minute'
 });
@@ -45,6 +51,32 @@ fastify.register(cors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
+});
+
+// Globalny Error Handler ustandaryzowany dla Zoda i Prismy
+fastify.setErrorHandler((error, request, reply) => {
+  if (hasZodFastifySchemaValidationErrors(error)) {
+    return reply.status(400).send({
+      error: 'Błąd walidacji danych',
+      details: error.validation
+    });
+  }
+  
+  if (error.message === 'Brak dostępnych pokoi tego typu w wybranym terminie' || 
+      error.message === 'Liczba gości przekracza pojemność pokoju') {
+    return reply.status(409).send({ error: error.message });
+  }
+
+  if (error.code && error.code.startsWith('P2')) {
+    return reply.status(400).send({ error: 'Błąd bazy danych (np. konflikt danych)' });
+  }
+
+  if (error.statusCode === 429) {
+    return reply.status(429).send({ error: 'Zbyt wiele żądań, spróbuj ponownie później.' });
+  }
+
+  request.log.error(error);
+  return reply.status(500).send({ error: 'Wystąpił nieoczekiwany błąd serwera' });
 });
 
 // Rejestracja ruterów
