@@ -3,13 +3,23 @@ import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
+import helmet from '@fastify/helmet';
+import { PrismaClient } from '@prisma/client';
 import { bookingRoutes } from './routes/bookings';
 import { authRoutes } from './routes/auth';
 import { adminRoutes } from './routes/admin';
 
+const prisma = new PrismaClient();
+
 const fastify = Fastify({
-  logger: true,
+  logger: process.env.NODE_ENV === 'development' ? {
+    transport: {
+      target: 'pino-pretty'
+    }
+  } : true,
 });
+
+fastify.register(helmet);
 
 // Rejestracja JWT
 if (!process.env.JWT_SECRET) {
@@ -53,5 +63,14 @@ const start = async () => {
     process.exit(1);
   }
 };
+
+['SIGINT', 'SIGTERM'].forEach((signal) => {
+  process.on(signal, async () => {
+    fastify.log.info(`Zatrzymywanie serwera z powodu ${signal}`);
+    await fastify.close();
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+});
 
 start();

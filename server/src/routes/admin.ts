@@ -13,13 +13,16 @@ const roomTypeSchema = z.object({
   images: z.union([z.string(), z.array(z.string())]).optional()
 });
 
+const statusSchema = z.object({
+  status: z.enum(['PENDING', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED'])
+});
+
 export async function adminRoutes(fastify: FastifyInstance) {
   // Middleware do sprawdzania tokena
   fastify.addHook('onRequest', async (request, reply) => {
-    if (request.method === 'OPTIONS') return;
     try {
       await request.jwtVerify();
-      const role = (request.user as any).role;
+      const role = request.user.role;
       if (role !== 'ADMIN' && role !== 'RECEPTIONIST') {
         return reply.status(403).send({ error: 'Brak uprawnień' });
       }
@@ -126,20 +129,22 @@ export async function adminRoutes(fastify: FastifyInstance) {
 
   fastify.get('/admin/stats', async (request, reply) => {
     const totalBookings = await prisma.booking.count();
-    const rooms = await prisma.roomType.findMany();
+    const roomsAggr = await prisma.roomType.aggregate({
+      _sum: { totalRooms: true }
+    });
     
     return {
       totalBookings,
-      totalRooms: rooms.reduce((acc, r) => acc + r.totalRooms, 0),
+      totalRooms: roomsAggr._sum.totalRooms || 0,
     };
   });
 
   // Aktualizacja statusu rezerwacji (Check-in / Check-out)
-  fastify.patch<{ Params: { id: string }, Body: { status: string } }>('/admin/bookings/:id/status', async (request, reply) => {
+  fastify.patch<{ Params: { id: string }, Body: z.infer<typeof statusSchema> }>('/admin/bookings/:id/status', async (request, reply) => {
     const { id } = request.params;
-    const { status } = request.body;
     
     try {
+      const { status } = statusSchema.parse(request.body);
       const booking = await prisma.booking.update({
         where: { id },
         data: { status },
