@@ -1,7 +1,17 @@
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { PrismaClient } from '@prisma/client';
+import { z } from 'zod';
 
 const prisma = new PrismaClient();
+
+const roomTypeSchema = z.object({
+  name: z.string(),
+  capacity: z.preprocess((val) => Number(val), z.number().int().positive()),
+  totalRooms: z.preprocess((val) => Number(val), z.number().int().positive()),
+  description: z.string().optional(),
+  basePrice: z.preprocess((val) => Number(val), z.number().positive()),
+  images: z.union([z.string(), z.array(z.string())]).optional()
+});
 
 export async function adminRoutes(fastify: FastifyInstance) {
   // Middleware do sprawdzania tokena
@@ -9,13 +19,17 @@ export async function adminRoutes(fastify: FastifyInstance) {
     if (request.method === 'OPTIONS') return;
     try {
       await request.jwtVerify();
+      const role = (request.user as any).role;
+      if (role !== 'ADMIN' && role !== 'RECEPTIONIST') {
+        return reply.status(403).send({ error: 'Brak uprawnień' });
+      }
     } catch (err) {
-      reply.send(err);
+      reply.status(401).send({ error: 'Nieautoryzowany' });
     }
   });
 
   // Usuwanie rezerwacji (Przeniesione na górę)
-  fastify.delete('/admin/bookings/:id', async (request: any, reply) => {
+  fastify.delete<{ Params: { id: string } }>('/admin/bookings/:id', async (request, reply) => {
     const { id } = request.params;
     console.log(`Próba usunięcia rezerwacji o ID: ${id}`);
     try {
@@ -25,8 +39,8 @@ export async function adminRoutes(fastify: FastifyInstance) {
       console.log('Rezerwacja usunięta pomyślnie');
       return { success: true };
     } catch (err) {
-      console.error('Błąd podczas usuwania rezerwacji:', err);
-      reply.status(400).send({ error: 'Nie udało się usunąć rezerwacji' });
+      fastify.log.error(err);
+      reply.status(500).send({ error: 'Wystąpił błąd podczas przetwarzania żądania' });
     }
   });
 
@@ -49,49 +63,53 @@ export async function adminRoutes(fastify: FastifyInstance) {
   });
 
   // Dodawanie nowego typu pokoju
-  fastify.post('/admin/room-types', async (request: any, reply) => {
-    const { name, capacity, totalRooms, description, basePrice, images } = request.body;
+  fastify.post<{ Body: z.infer<typeof roomTypeSchema> }>('/admin/room-types', async (request, reply) => {
     try {
+      const parsedBody = roomTypeSchema.parse(request.body);
+      const { name, capacity, totalRooms, description, basePrice, images } = parsedBody;
       const roomType = await prisma.roomType.create({
         data: {
           name,
-          capacity: parseInt(capacity),
-          totalRooms: parseInt(totalRooms),
+          capacity,
+          totalRooms,
           description,
-          basePrice: parseFloat(basePrice),
+          basePrice,
           images: Array.isArray(images) ? JSON.stringify(images) : images
         }
       });
       return roomType;
     } catch (err) {
-      reply.status(400).send({ error: 'Nie udało się utworzyć typu pokoju' });
+      fastify.log.error(err);
+      reply.status(500).send({ error: 'Wystąpił błąd podczas przetwarzania żądania' });
     }
   });
 
   // Aktualizacja typu pokoju
-  fastify.put('/admin/room-types/:id', async (request: any, reply) => {
+  fastify.put<{ Params: { id: string }, Body: z.infer<typeof roomTypeSchema> }>('/admin/room-types/:id', async (request, reply) => {
     const { id } = request.params;
-    const { name, capacity, totalRooms, description, basePrice, images } = request.body;
     try {
+      const parsedBody = roomTypeSchema.parse(request.body);
+      const { name, capacity, totalRooms, description, basePrice, images } = parsedBody;
       const roomType = await prisma.roomType.update({
         where: { id },
         data: {
           name,
-          capacity: parseInt(capacity),
-          totalRooms: parseInt(totalRooms),
+          capacity,
+          totalRooms,
           description,
-          basePrice: parseFloat(basePrice),
+          basePrice,
           images: Array.isArray(images) ? JSON.stringify(images) : images
         }
       });
       return roomType;
     } catch (err) {
-      reply.status(400).send({ error: 'Nie udało się zaktualizować typu pokoju' });
+      fastify.log.error(err);
+      reply.status(500).send({ error: 'Wystąpił błąd podczas przetwarzania żądania' });
     }
   });
 
   // Usuwanie typu pokoju
-  fastify.delete('/admin/room-types/:id', async (request: any, reply) => {
+  fastify.delete<{ Params: { id: string } }>('/admin/room-types/:id', async (request, reply) => {
     const { id } = request.params;
     console.log(`Próba usunięcia pokoju o ID: ${id}`);
     try {
@@ -101,8 +119,8 @@ export async function adminRoutes(fastify: FastifyInstance) {
       console.log('Pokój usunięty pomyślnie:', deleted.name);
       return { success: true };
     } catch (err: any) {
-      console.error('Błąd podczas usuwania typu pokoju:', err);
-      reply.status(400).send({ error: `Błąd serwera: ${err.message || 'Nieznany błąd'}` });
+      fastify.log.error(err);
+      reply.status(500).send({ error: 'Wystąpił błąd podczas przetwarzania żądania' });
     }
   });
 
@@ -117,7 +135,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
   });
 
   // Aktualizacja statusu rezerwacji (Check-in / Check-out)
-  fastify.patch('/admin/bookings/:id/status', async (request: any, reply) => {
+  fastify.patch<{ Params: { id: string }, Body: { status: string } }>('/admin/bookings/:id/status', async (request, reply) => {
     const { id } = request.params;
     const { status } = request.body;
     
@@ -129,7 +147,8 @@ export async function adminRoutes(fastify: FastifyInstance) {
       });
       return booking;
     } catch (err) {
-      reply.status(400).send({ error: 'Nie udało się zaktualizować statusu rezerwacji' });
+      fastify.log.error(err);
+      reply.status(500).send({ error: 'Wystąpił błąd podczas przetwarzania żądania' });
     }
   });
 }

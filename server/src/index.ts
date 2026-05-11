@@ -1,6 +1,8 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
+import cookie from '@fastify/cookie';
+import rateLimit from '@fastify/rate-limit';
 import { bookingRoutes } from './routes/bookings';
 import { authRoutes } from './routes/auth';
 import { adminRoutes } from './routes/admin';
@@ -10,13 +12,26 @@ const fastify = Fastify({
 });
 
 // Rejestracja JWT
+if (!process.env.JWT_SECRET) {
+  throw new Error("Missing JWT_SECRET environment variable");
+}
 fastify.register(jwt, {
-  secret: 'super-tajne-haslo-gala-2026', // W produkcji użyj zmiennej środowiskowej
+  secret: process.env.JWT_SECRET,
+  cookie: {
+    cookieName: 'token',
+    signed: false
+  }
+});
+
+fastify.register(cookie);
+fastify.register(rateLimit, {
+  max: 100,
+  timeWindow: '1 minute'
 });
 
 // Rejestracja CORS
 fastify.register(cors, {
-  origin: true,
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

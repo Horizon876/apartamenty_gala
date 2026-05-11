@@ -46,6 +46,6 @@ model User {
   email     String   @unique
   password  String
   name      String
-  role      String   @default("RECEPTIONIST")
+  role      String   @default("USER")
   createdAt DateTime @default(now())
 }

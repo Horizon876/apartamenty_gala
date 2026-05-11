@@ -11,7 +11,14 @@ const loginSchema = z.object({
 });
 
 export async function authRoutes(fastify: FastifyInstance) {
-  fastify.post('/auth/login', async (request, reply) => {
+  fastify.post('/auth/login', {
+    config: {
+      rateLimit: {
+        max: 5,
+        timeWindow: '15 minutes'
+      }
+    }
+  }, async (request, reply) => {
     const body = loginSchema.parse(request.body);
 
     const user = await prisma.user.findUnique({
@@ -35,6 +42,13 @@ export async function authRoutes(fastify: FastifyInstance) {
       name: user.name,
     });
 
-    return { token, user: { name: user.name, role: user.role } };
+    reply.setCookie('token', token, {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    return { user: { name: user.name, role: user.role } };
   });
 }
