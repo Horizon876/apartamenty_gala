@@ -1,14 +1,23 @@
-import React, { useState, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
-import BookingModal from './components/BookingModal';
 
 const Home = React.lazy(() => import('./pages/Home'));
 const Rooms = React.lazy(() => import('./pages/Rooms'));
 const Offers = React.lazy(() => import('./pages/Offers'));
 const Contact = React.lazy(() => import('./pages/Contact'));
+const Booking = React.lazy(() => import('./pages/Booking'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Reception = React.lazy(() => import('./pages/Reception'));
+
+// Komponent chroniący trasy
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('adminToken');
+  if (!token) return <Login />;
+  return children;
+};
 
 // Prosty wskaźnik ładowania (fallback)
 const PageLoader = () => (
@@ -18,27 +27,36 @@ const PageLoader = () => (
 );
 
 function App() {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-
   return (
     <Router>
       <ScrollToTop />
-      <div className="relative min-h-screen flex flex-col">
-        <Navbar onOpenBooking={() => setIsBookingOpen(true)} />
-        <main className="flex-grow">
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Home onOpenBooking={() => setIsBookingOpen(true)} />} />
-              <Route path="/pokoje" element={<Rooms />} />
-              <Route path="/oferta-imprez" element={<Offers />} />
-              <Route path="/kontakt" element={<Contact />} />
-            </Routes>
-          </Suspense>
-        </main>
-        <Footer />
-        <BookingModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
-      </div>
+      <AppContent />
     </Router>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+  const isAdminPage = location.pathname === '/login' || location.pathname === '/recepcja';
+
+  return (
+    <div className="relative min-h-screen flex flex-col">
+      {!isAdminPage && <Navbar />}
+      <main className="flex-grow">
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/pokoje" element={<Rooms />} />
+            <Route path="/oferta-imprez" element={<Offers />} />
+            <Route path="/kontakt" element={<Contact />} />
+            <Route path="/rezerwacja" element={<Booking />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/recepcja" element={<ProtectedRoute><Reception /></ProtectedRoute>} />
+          </Routes>
+        </Suspense>
+      </main>
+      {!isAdminPage && <Footer />}
+    </div>
   );
 }
 

@@ -46,6 +46,7 @@ const QuickLinks = () => (
       <Link to="/oferta-imprez" className="text-sm font-normal hover:opacity-60 transition-opacity">Oferta Imprez</Link>
       <Link to="/#opinie" className="text-sm font-normal hover:opacity-60 transition-opacity">Opinie</Link>
       <Link to="/kontakt" className="text-sm font-normal hover:opacity-60 transition-opacity">Kontakt</Link>
+      <Link to="/recepcja" className="text-sm font-normal hover:opacity-60 transition-opacity opacity-40 hover:opacity-100">Panel Recepcji</Link>
     </nav>
   </div>
 );

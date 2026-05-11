@@ -4,10 +4,10 @@ import About from '../components/About';
 import Gallery from '../components/Gallery';
 import Testimonials from '../components/Testimonials';
 
-const Home = ({ onOpenBooking }) => {
+const Home = () => {
   return (
     <main>
-      <Hero onOpenBooking={onOpenBooking} />
+      <Hero />
       <About />
       <Gallery />
       <Testimonials />

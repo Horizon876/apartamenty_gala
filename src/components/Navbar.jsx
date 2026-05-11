@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Navbar = ({ onOpenBooking }) => {
+const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const isHomePage = location.pathname === '/';
+  const isHeroPage = location.pathname === '/' || (location.pathname === '/rezerwacja' && (!new URLSearchParams(location.search).get('step') || new URLSearchParams(location.search).get('step') === 'search'));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,11 +25,11 @@ const Navbar = ({ onOpenBooking }) => {
     { name: 'Kontakt', path: '/kontakt' }
   ];
 
-  const textColorClass = isHomePage && !isScrolled ? 'text-brand-off-white' : 'text-brand-anthracite';
-  const logoColorClass = isHomePage && !isScrolled ? 'text-brand-off-white' : 'text-brand-anthracite';
+  const textColorClass = isHeroPage && !isScrolled ? 'text-brand-off-white' : 'text-brand-anthracite';
+  const logoColorClass = isHeroPage && !isScrolled ? 'text-brand-off-white' : 'text-brand-anthracite';
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled || !isHomePage ? 'bg-brand-off-white/90 backdrop-blur-md py-4 shadow-sm' : 'bg-gradient-to-b from-brand-anthracite/70 to-transparent py-8'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled || !isHeroPage ? 'bg-brand-off-white/90 backdrop-blur-md py-4 shadow-sm' : 'bg-gradient-to-b from-brand-anthracite/70 to-transparent py-8'}`}>
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link
           to="/"
@@ -62,12 +62,12 @@ const Navbar = ({ onOpenBooking }) => {
               {link.name}
             </Link>
           ))}
-          <button
-            onClick={onOpenBooking}
-            className={`px-8 py-3 border text-[10px] uppercase tracking-[0.3em] font-medium transition-all duration-500 drop-shadow-sm ${isHomePage && !isScrolled ? 'border-brand-off-white/30 text-brand-off-white hover:bg-brand-off-white hover:text-brand-anthracite' : 'border-brand-anthracite/20 text-brand-anthracite hover:bg-brand-anthracite hover:text-brand-off-white'}`}
+          <Link
+            to="/rezerwacja"
+            className={`px-8 py-3 border text-[10px] uppercase tracking-[0.3em] font-medium transition-all duration-500 drop-shadow-sm ${isHeroPage && !isScrolled ? 'border-brand-off-white/30 text-brand-off-white hover:bg-brand-off-white hover:text-brand-anthracite' : 'border-brand-anthracite/20 text-brand-anthracite hover:bg-brand-anthracite hover:text-brand-off-white'}`}
           >
             Zarezerwuj
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -100,12 +100,13 @@ const Navbar = ({ onOpenBooking }) => {
             {link.name}
           </Link>
         ))}
-        <button
-          onClick={() => { setIsMenuOpen(false); onOpenBooking(); }}
+        <Link
+          to="/rezerwacja"
+          onClick={() => setIsMenuOpen(false)}
           className="px-10 py-4 bg-brand-gold text-brand-off-white uppercase tracking-[0.3em] text-xs transition-all duration-500"
         >
           Zarezerwuj pobyt
-        </button>
+        </Link>
       </div>
     </nav>
   );

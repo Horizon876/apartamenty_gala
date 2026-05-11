@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const Hero = ({ onOpenBooking }) => {
+const Hero = () => {
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden flex items-center justify-center">
       {/* Background with zoom effect */}
