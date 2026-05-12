@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
-    <section id="home" className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+    <section id="home" className="relative h-[100dvh] md:h-screen w-full overflow-hidden flex items-center justify-center">
       {/* Background with zoom effect */}
       <motion.div 
         initial={{ scale: 1.1 }}
@@ -30,9 +30,9 @@ const Hero = () => {
           <span className="text-brand-gold uppercase tracking-[0.8em] text-xs md:text-sm mb-6 block font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
             Luksusowe Apartamenty
           </span>
-          <h1 className="text-brand-off-white text-5xl md:text-8xl lg:text-9xl font-serif font-bold mb-12 leading-tight drop-shadow-[0_10px_35px_rgba(0,0,0,0.8)]">
+          <h1 className="text-brand-off-white text-4xl md:text-8xl lg:text-9xl font-serif font-bold mb-12 leading-tight drop-shadow-[0_10px_35px_rgba(0,0,0,0.8)]">
             Luksus w rytmie <br />
-            <span className="italic font-medium">natury</span>
+            <span className="italic font-medium text-3xl md:text-7xl lg:text-8xl">natury</span>
           </h1>
           <motion.div
             initial={{ opacity: 0 }}

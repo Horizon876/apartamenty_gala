@@ -20,8 +20,8 @@ export async function authRoutes(fastify: FastifyInstance) {
     },
     config: {
       rateLimit: {
-        max: 5,
-        timeWindow: '15 minutes'
+        max: 100,
+        timeWindow: '1 minute'
       }
     }
   }, async (request, reply) => {

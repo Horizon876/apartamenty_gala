@@ -54,7 +54,16 @@ export class BookingService {
     });
   }
 
-  async getRoomTypes() {
+  async getRoomTypes(guests?: number) {
+    if (guests) {
+      return await prisma.roomType.findMany({
+        where: {
+          capacity: {
+            gte: guests
+          }
+        }
+      });
+    }
     return await prisma.roomType.findMany();
   }
 }

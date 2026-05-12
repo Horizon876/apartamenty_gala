@@ -6,8 +6,8 @@ const ReceptionRoomManager = ({ roomTypes, onOpenModal, onDeleteRoom }) => {
     <div className="space-y-12">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-brand-anthracite/10 pb-10">
         <div>
-          <h2 className="text-4xl font-serif text-brand-anthracite italic mb-2">Zarządzaj <span className="text-brand-gold">Pokojami</span></h2>
-          <p className="text-[10px] uppercase tracking-[0.6em] text-brand-anthracite/40 font-bold">Konfiguracja typów apartamentów i cen</p>
+          <h2 className="text-2xl md:text-4xl font-serif text-brand-anthracite italic mb-2">Zarządzaj <span className="text-brand-gold">Pokojami</span></h2>
+          <p className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-brand-anthracite/40 font-bold">Konfiguracja typów apartamentów i cen</p>
         </div>
       </header>
 
@@ -15,7 +15,7 @@ const ReceptionRoomManager = ({ roomTypes, onOpenModal, onDeleteRoom }) => {
         {roomTypes.map(type => (
           <div 
             key={type.id}
-            className="bg-white border border-brand-anthracite/10 p-10 group hover:border-brand-gold transition-all flex flex-col h-full"
+            className="bg-white border border-brand-anthracite/10 p-6 md:p-10 group hover:border-brand-gold transition-all flex flex-col h-full"
           >
             <div className="flex justify-between items-start mb-10">
               <div className="p-5 bg-brand-gold/10 text-brand-gold group-hover:bg-brand-gold group-hover:text-white transition-all duration-500">

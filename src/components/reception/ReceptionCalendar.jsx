@@ -53,18 +53,18 @@ const ReceptionCalendar = ({
       {/* Calendar Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-brand-anthracite/10 pb-10">
         <div>
-          <h2 className="text-4xl font-serif text-brand-anthracite italic mb-2">Kalendarz <span className="text-brand-gold">Obiektu</span></h2>
-          <p className="text-[10px] uppercase tracking-[0.6em] text-brand-anthracite/40 font-bold">Zarządzaj dostępnością i rezerwacjami</p>
+          <h2 className="text-2xl md:text-4xl font-serif text-brand-anthracite italic mb-2">Kalendarz <span className="text-brand-gold">Obiektu</span></h2>
+          <p className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-brand-anthracite/40 font-bold">Zarządzaj dostępnością i rezerwacjami</p>
         </div>
 
-        <div className="flex items-center space-x-6">
+        <div className="flex flex-wrap items-center gap-4 md:gap-6 w-full md:w-auto">
           {/* Room Type Filter */}
           <div className="flex items-center space-x-4 bg-white border border-brand-anthracite/10 px-6 py-3">
             <Home size={14} className="text-brand-gold" />
             <select 
               value={filterRoomTypeId}
               onChange={(e) => setFilterRoomTypeId(e.target.value)}
-              className="bg-transparent text-[9px] uppercase tracking-widest font-bold outline-none cursor-pointer text-brand-anthracite min-w-[150px]"
+              className="bg-transparent text-[9px] uppercase tracking-widest font-bold outline-none cursor-pointer text-brand-anthracite w-full md:min-w-[150px]"
             >
               <option value="all">Wszystkie Apartamenty</option>
               {roomTypes.map(type => (
@@ -97,11 +97,11 @@ const ReceptionCalendar = ({
             >
               <ChevronLeft size={20} />
             </button>
-            <div className="text-center px-6 min-w-[140px]">
-              <span className="text-[10px] uppercase tracking-[0.4em] font-bold block text-brand-anthracite">
+            <div className="text-center px-4 md:px-6 min-w-[100px] md:min-w-[140px]">
+              <span className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] md:tracking-[0.4em] font-bold block text-brand-anthracite">
                 {currentDate.toLocaleString('pl-PL', { month: 'long' })}
               </span>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-brand-gold font-bold">{year}</span>
+              <span className="text-[8px] md:text-[9px] uppercase tracking-[0.2em] text-brand-gold font-bold">{year}</span>
             </div>
             <button 
               onClick={() => setCurrentDate(new Date(year, month + 1))}

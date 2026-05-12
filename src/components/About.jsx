@@ -49,7 +49,7 @@ const About = () => {
               transition={{ duration: 1 }}
             >
               <span className="text-brand-gold uppercase tracking-[0.4em] text-xs mb-4 block font-medium">O Hotelu</span>
-              <h2 className="text-4xl md:text-6xl font-serif mb-12 text-brand-anthracite leading-tight">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif mb-10 md:mb-12 text-brand-anthracite leading-tight">
                 Poznaj komfort <br />
                 <span className="italic text-brand-gold">w sercu Małopolski</span>
               </h2>
@@ -65,7 +65,7 @@ const About = () => {
                     className="border-l-[1px] border-brand-gold/30 pl-8"
                   >
                     <h3 className="text-brand-gold tracking-[0.2em] text-sm font-semibold mb-4">{section.title}</h3>
-                    <p className="text-brand-anthracite leading-relaxed font-normal text-lg">
+                    <p className="text-brand-anthracite leading-relaxed font-normal text-base md:text-lg">
                       {section.content}
                     </p>
                   </motion.div>

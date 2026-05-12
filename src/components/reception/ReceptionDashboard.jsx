@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 const StatCard = ({ label, value, icon: Icon, trend, color = "gold" }) => (
-  <div className="bg-white border border-brand-anthracite/10 p-8 flex flex-col justify-between h-full group hover:border-brand-gold/50 transition-all">
+  <div className="bg-white border border-brand-anthracite/10 p-6 md:p-8 flex flex-col justify-between h-full group hover:border-brand-gold/50 transition-all">
     <div className="flex justify-between items-start mb-6">
       <div className={`p-4 bg-brand-${color}/10 text-brand-${color}`}>
         <Icon size={24} />
@@ -48,8 +48,8 @@ const ReceptionDashboard = ({ bookings, roomTypes, onUpdateStatus, onDeleteBooki
       {/* Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h2 className="text-5xl font-serif text-brand-anthracite italic mb-4">Witaj w <span className="text-brand-gold">Gala Reception</span></h2>
-          <p className="text-[10px] uppercase tracking-[0.6em] text-brand-anthracite/40 font-bold">Przegląd operacyjny na dzień {new Date().toLocaleDateString('pl-PL')}</p>
+          <h2 className="text-3xl md:text-5xl font-serif text-brand-anthracite italic mb-4">Witaj w <span className="text-brand-gold">Gala Reception</span></h2>
+          <p className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-brand-anthracite/40 font-bold">Przegląd operacyjny na dzień {new Date().toLocaleDateString('pl-PL')}</p>
         </div>
         <div className="flex items-center space-x-4 bg-white border border-brand-anthracite/10 p-4">
           <Clock size={16} className="text-brand-gold" />
@@ -99,7 +99,7 @@ const ReceptionDashboard = ({ bookings, roomTypes, onUpdateStatus, onDeleteBooki
             
             <div className="space-y-4">
               {todayArrivals.length > 0 ? todayArrivals.map((b) => (
-                <div key={b.id} className="flex items-center justify-between p-6 bg-white border border-brand-anthracite/5 group hover:border-brand-gold/30 transition-all">
+                <div key={b.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-white border border-brand-anthracite/5 group hover:border-brand-gold/30 transition-all gap-4">
                   <div className="flex items-center space-x-6">
                     <div className={`w-12 h-12 flex items-center justify-center font-serif italic text-xl
                       ${b.status === 'CHECKED_IN' ? 'bg-brand-gold text-white' : 'bg-brand-gold/10 text-brand-gold'}
@@ -150,7 +150,7 @@ const ReceptionDashboard = ({ bookings, roomTypes, onUpdateStatus, onDeleteBooki
             </div>
             <div className="space-y-4">
               {todayDepartures.length > 0 ? todayDepartures.map((b) => (
-                <div key={b.id} className="flex items-center justify-between p-6 bg-white border border-brand-anthracite/5 group hover:border-brand-gold/30 transition-all">
+                <div key={b.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 md:p-6 bg-white border border-brand-anthracite/5 group hover:border-brand-gold/30 transition-all gap-4">
                   <div className="flex items-center space-x-6">
                     <div className={`w-12 h-12 flex items-center justify-center font-serif italic text-xl
                       ${b.status === 'CHECKED_OUT' ? 'bg-brand-anthracite text-white' : 'bg-brand-anthracite/5 text-brand-anthracite/40'}

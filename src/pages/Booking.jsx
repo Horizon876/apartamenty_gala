@@ -194,9 +194,10 @@ const Booking = () => {
     setStep(newStep);
   };
 
-  const fetchRoomTypes = async () => {
+  const fetchRoomTypes = async (guests = null) => {
     try {
-      const response = await fetch(`${API_URL}/room-types`);
+      const url = guests ? `${API_URL}/room-types?guests=${guests}` : `${API_URL}/room-types`;
+      const response = await fetch(url);
       const data = await response.json();
       setRoomTypes(data);
     } catch (error) {
@@ -211,6 +212,7 @@ const Booking = () => {
       return;
     }
     setError('');
+    fetchRoomTypes(searchParams.guests);
     updateStep('results');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

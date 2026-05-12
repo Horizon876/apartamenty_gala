@@ -11,8 +11,8 @@ const ReceptionGuestList = ({ bookings, searchTerm, setSearchTerm, onUpdateStatu
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-brand-anthracite/10 pb-10">
         <div>
-          <h2 className="text-4xl font-serif text-brand-anthracite italic mb-2">Lista <span className="text-brand-gold">Naszych Gości</span></h2>
-          <p className="text-[10px] uppercase tracking-[0.6em] text-brand-anthracite/40 font-bold">Baza danych i historia pobytów</p>
+          <h2 className="text-2xl md:text-4xl font-serif text-brand-anthracite italic mb-2">Lista <span className="text-brand-gold">Naszych Gości</span></h2>
+          <p className="text-[9px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-brand-anthracite/40 font-bold">Baza danych i historia pobytów</p>
         </div>
 
         <div className="flex items-center bg-white px-6 py-4 border border-brand-anthracite/10 w-full md:w-96">

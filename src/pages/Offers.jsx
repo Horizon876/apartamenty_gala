@@ -49,7 +49,7 @@ const Offers = () => {
           className="text-center mb-24"
         >
           <span className="text-brand-gold uppercase tracking-[0.6em] text-sm mb-4 block">Twoje Wydarzenie</span>
-          <h1 className="text-5xl md:text-7xl font-serif text-brand-anthracite mb-8">Oferta Imprez i Konferencji</h1>
+          <h1 className="text-4xl md:text-7xl font-serif text-brand-anthracite mb-8">Oferta Imprez i Konferencji</h1>
           <p className="max-w-2xl mx-auto text-brand-anthracite/60 font-light text-lg">
             Organizujemy niezapomniane uroczystości i profesjonalne spotkania biznesowe. 
             Nasz zespół zadba o każdy szczegół Twojego wydarzenia.
@@ -93,11 +93,11 @@ const Offers = () => {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-brand-logo-beige p-12 md:p-24 relative overflow-hidden"
+          className="bg-brand-logo-beige p-8 md:p-24 relative overflow-hidden"
         >
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-serif text-brand-burgundy mb-8">Co organizujemy?</h2>
+              <h2 className="text-3xl md:text-5xl font-serif text-brand-burgundy mb-8">Co organizujemy?</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {events.map((event, index) => (
                   <div key={index} className="flex items-center gap-4 text-brand-anthracite font-medium">

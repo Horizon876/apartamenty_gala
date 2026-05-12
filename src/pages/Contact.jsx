@@ -8,7 +8,7 @@ const Contact = () => {
       icon: <MapPin className="w-6 h-6" />,
       title: "Adres",
       details: ["Dolna 157, 32-440 Rudnik"],
-      link: "https://goo.gl/maps/placeholder"
+      link: "https://www.google.com/maps/search/?api=1&query=Apartamenty+Gala+Dolna+157+32-440+Rudnik"
     },
     {
       icon: <Phone className="w-6 h-6" />,
@@ -19,7 +19,7 @@ const Contact = () => {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email",
-      details: ["recepcja@apartamentygala.com"],
+      details: ["recepcja@apartamentygala.pl"],
       link: "mailto:recepcja@apartamentygala.pl"
     },
     {
@@ -64,20 +64,38 @@ const Contact = () => {
             <h2 className="text-3xl font-serif text-brand-anthracite mb-12">Informacje kontaktowe</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               {contactInfo.map((info, index) => (
-                <div key={index} className="flex flex-col space-y-4">
-                  <div className="text-brand-gold">{info.icon}</div>
-                  <h3 className="text-xl font-serif text-brand-anthracite">{info.title}</h3>
-                  <div className="space-y-1">
-                    {info.details.map((detail, i) => (
-                      <p key={i} className="text-brand-anthracite/70 font-light">{detail}</p>
-                    ))}
-                  </div>
-
+                <div key={index} className="flex flex-col">
+                  {info.link ? (
+                    <a 
+                      href={info.link} 
+                      target={info.title === "Adres" ? "_blank" : undefined}
+                      rel={info.title === "Adres" ? "noopener noreferrer" : undefined}
+                      className="group flex flex-col space-y-4"
+                    >
+                      <div className="text-brand-gold group-hover:scale-110 transition-transform duration-300">{info.icon}</div>
+                      <h3 className="text-xl font-serif text-brand-anthracite group-hover:text-brand-gold transition-colors">{info.title}</h3>
+                      <div className="space-y-1">
+                        {info.details.map((detail, i) => (
+                          <p key={i} className="text-brand-anthracite/70 font-light group-hover:text-brand-anthracite transition-colors">{detail}</p>
+                        ))}
+                      </div>
+                    </a>
+                  ) : (
+                    <div className="flex flex-col space-y-4">
+                      <div className="text-brand-gold">{info.icon}</div>
+                      <h3 className="text-xl font-serif text-brand-anthracite">{info.title}</h3>
+                      <div className="space-y-1">
+                        {info.details.map((detail, i) => (
+                          <p key={i} className="text-brand-anthracite/70 font-light">{detail}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
 
-            <div className="mt-16 p-8 border border-brand-gold/20 bg-white/50 backdrop-blur-sm">
+            <div className="hidden md:block mt-16 p-8 border border-brand-gold/20 bg-white/50 backdrop-blur-sm">
               <h3 className="text-xl font-serif text-brand-anthracite mb-4">Lokalizacja</h3>
               <p className="text-brand-anthracite/70 font-light mb-6">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

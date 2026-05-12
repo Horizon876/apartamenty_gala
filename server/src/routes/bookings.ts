@@ -2,12 +2,20 @@ import { FastifyInstance } from 'fastify';
 import { CreateBookingSchema } from '../schemas/bookingSchema';
 import { bookingService } from '../services/bookingService';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
 
 export async function bookingRoutes(fastify: FastifyInstance) {
   const server = fastify.withTypeProvider<ZodTypeProvider>();
 
-  server.get('/room-types', async (request, reply) => {
-    const roomTypes = await bookingService.getRoomTypes();
+  server.get('/room-types', {
+    schema: {
+      querystring: z.object({
+        guests: z.coerce.number().optional()
+      })
+    }
+  }, async (request, reply) => {
+    const { guests } = request.query as { guests?: number };
+    const roomTypes = await bookingService.getRoomTypes(guests);
     return roomTypes;
   });
 

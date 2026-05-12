@@ -50,7 +50,7 @@ const Gallery = () => {
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
-            <h2 className="text-5xl md:text-7xl font-serif text-brand-anthracite leading-tight">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif text-brand-anthracite leading-tight">
               Esencja <span className="italic text-brand-gold">naszego</span> stylu
             </h2>
           </motion.div>

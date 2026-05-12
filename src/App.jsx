@@ -14,8 +14,8 @@ const Reception = React.lazy(() => import('./pages/Reception'));
 
 // Komponent chroniący trasy
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('adminToken');
-  if (!token) return <Login />;
+  const user = localStorage.getItem('adminUser');
+  if (!user) return <Login />;
   return children;
 };
 

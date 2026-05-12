@@ -14,7 +14,7 @@ async function main() {
       totalRooms: 5,
       description: 'Komfortowa przestrzeń dla podróżujących solo. Zapewnia spokój i wszystkie niezbędne udogodnienia do pracy i odpoczynku.',
       basePrice: 180,
-      images: JSON.stringify(['/images/rooms/single.webp'])
+      images: ['/images/rooms/single.webp']
     },
     {
       name: 'Pokój Dwuosobowy Standard',
@@ -22,7 +22,7 @@ async function main() {
       totalRooms: 12,
       description: 'Klasyczny wybór dla par. Eleganckie wykończenie i przytulna atmosfera gwarantująca relaks.',
       basePrice: 280,
-      images: JSON.stringify(['/images/rooms/double_standard.webp'])
+      images: ['/images/rooms/double_standard.webp']
     },
     {
       name: 'Pokój Trzyosobowy',
@@ -30,7 +30,7 @@ async function main() {
       totalRooms: 6,
       description: 'Przestronne wnętrze idealne dla rodzin lub grup znajomych. Połączenie funkcjonalności z luksusowym stylem.',
       basePrice: 380,
-      images: JSON.stringify(['/images/rooms/triple.webp'])
+      images: ['/images/rooms/triple.webp']
     },
     {
       name: 'Pokój Czteroosobowy',
@@ -38,7 +38,7 @@ async function main() {
       totalRooms: 3,
       description: 'Nasze największe pokoje, zapewniające swobodę i wygodę dla większych grup lub rodzin.',
       basePrice: 480,
-      images: JSON.stringify(['/images/rooms/quadruple.webp'])
+      images: ['/images/rooms/quadruple.webp']
     },
     {
       name: 'Studio Trzyosobowe',
@@ -46,7 +46,7 @@ async function main() {
       totalRooms: 2,
       description: 'Wyjątkowy układ pomieszczeń zapewniający dodatkową prywatność i przestrzeń. Idealne na dłuższe pobyty.',
       basePrice: 550,
-      images: JSON.stringify(['/images/rooms/studio_triple.webp'])
+      images: ['/images/rooms/studio_triple.webp']
     },
   ]
 

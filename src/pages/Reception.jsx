@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
 
 // Modular Components
 import ReceptionSidebar from '../components/reception/ReceptionSidebar';
@@ -10,7 +11,7 @@ import ReceptionGuestList from '../components/reception/ReceptionGuestList';
 import ReceptionRoomManager from '../components/reception/ReceptionRoomManager';
 import ReceptionRoomModal from '../components/reception/ReceptionRoomModal';
 
-const API_URL = 'http://127.0.0.1:3000';
+const API_URL = 'http://localhost:3000';
 
 const Reception = () => {
   const [bookings, setBookings] = useState([]);
@@ -18,6 +19,7 @@ const Reception = () => {
   const [loading, setLoading] = useState(true);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewType, setViewType] = useState('timeline');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRoomTypeId, setFilterRoomTypeId] = useState('all');
@@ -33,16 +35,30 @@ const Reception = () => {
   });
   
   const navigate = useNavigate();
-  const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{"firstName": "Admin"}');
+  const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{"name": "Admin"}');
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
+    const user = localStorage.getItem('adminUser');
+    if (!user) {
       navigate('/login');
       return;
     }
     fetchData();
   }, [navigate, activeTab]);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [isSidebarOpen]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -54,25 +70,28 @@ const Reception = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUser');
     navigate('/login');
   };
 
   const apiFetch = async (endpoint, options = {}) => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
+    const user = localStorage.getItem('adminUser');
+    if (!user) {
       handleLogout();
       return { error: 'Brak autoryzacji' };
     }
 
-    const headers = { 'Authorization': `Bearer ${token}`, ...options.headers };
+    const headers = { ...options.headers };
     if (options.body && typeof options.body === 'string') {
       headers['Content-Type'] = 'application/json';
     }
 
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+      const response = await fetch(`${API_URL}${endpoint}`, { 
+        ...options, 
+        headers,
+        credentials: 'include' // Bardzo ważne dla ciasteczek
+      });
       if (response.status === 401 || response.status === 403) {
         handleLogout();
         return { error: 'Sesja wygasła' };
@@ -90,12 +109,14 @@ const Reception = () => {
 
   const fetchRoomTypes = async () => {
     const { data } = await apiFetch('/admin/room-types');
-    if (data) setRoomTypes(data);
+    if (data && data.data) setRoomTypes(data.data);
+    else if (Array.isArray(data)) setRoomTypes(data);
   };
 
   const fetchBookings = async () => {
     const { data } = await apiFetch('/admin/bookings');
-    if (data) setBookings(data);
+    if (data && data.data) setBookings(data.data);
+    else if (Array.isArray(data)) setBookings(data);
   };
 
   const handleOpenRoomModal = (room = null) => {
@@ -183,18 +204,47 @@ const Reception = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBFBF9] flex flex-col md:flex-row font-sans text-brand-anthracite selection:bg-brand-gold selection:text-white">
+    <div className="min-h-[100dvh] bg-[#FBFBF9] flex flex-col lg:flex-row font-sans text-brand-anthracite selection:bg-brand-gold selection:text-white relative overflow-x-hidden">
+      {/* Mobile Header Toggle */}
+      <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-brand-anthracite/10 sticky top-0 z-40">
+        <div className="flex flex-col">
+          <span className="text-xl font-serif tracking-widest uppercase text-brand-anthracite">Gala</span>
+          <span className="text-[7px] tracking-[0.5em] uppercase text-brand-gold font-bold">Reception</span>
+        </div>
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-2 text-brand-anthracite hover:text-brand-gold transition-colors"
+        >
+          {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 bg-brand-anthracite/40 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar Navigation */}
       <ReceptionSidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         onLogout={handleLogout}
-        adminName={adminUser.firstName}
+        adminName={adminUser.name}
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 min-h-screen">
-        <div className="p-10 md:p-20 max-w-[1600px] mx-auto">
+      <main className="flex-1 min-h-[100dvh]">
+        <div className="p-4 md:p-10 lg:p-20 max-w-[1600px] mx-auto">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
