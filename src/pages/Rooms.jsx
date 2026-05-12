@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const API_URL = 'http://localhost:3000';
+import { API_URL } from '../config/api';
+
 
 const Rooms = () => {
   const [roomTypes, setRoomTypes] = useState([]);

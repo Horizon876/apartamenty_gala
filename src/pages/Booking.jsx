@@ -21,7 +21,8 @@ import {
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
-const API_URL = 'http://localhost:3000';
+import { API_URL } from '../config/api';
+
 
 const ROOM_IMAGES = {
   'Pokój Jednoosobowy': '/images/rooms/single.webp',

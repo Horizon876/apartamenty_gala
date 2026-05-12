@@ -11,7 +11,8 @@ import ReceptionGuestList from '../components/reception/ReceptionGuestList';
 import ReceptionRoomManager from '../components/reception/ReceptionRoomManager';
 import ReceptionRoomModal from '../components/reception/ReceptionRoomModal';
 
-const API_URL = 'http://localhost:3000';
+import { API_URL } from '../config/api';
+
 
 const Reception = () => {
   const [bookings, setBookings] = useState([]);
