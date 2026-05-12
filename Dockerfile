@@ -1,5 +1,5 @@
 # ETAP 1: Budowanie aplikacji Frontend
-FROM node:18-alpine AS builder
+FROM node:22.14.0-slim AS builder
 
 WORKDIR /app
 COPY package*.json ./
