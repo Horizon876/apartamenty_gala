@@ -29,8 +29,9 @@ export async function authRoutes(fastify: FastifyInstance) {
       where: { email: body.email },
     });
 
-    // Dummy hash (bcrypt.hashSync('dummy', 10)) aby zapobiec atakom timing (User Enumeration)
-    const dummyHash = '$2b$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    // Dummy hash: wynik bcrypt.hashSync('dummy_password', 10)
+    // Zapewnia to, że bcrypt zużyje tyle samo czasu, co przy weryfikacji prawdziwego hasła.
+    const dummyHash = '$2b$10$qi0Zr92opRa27rn8xBtVqON/uO3PU6FilGYH5.yiZMlQ9X99.hVTS';
     const hashToCompare = user ? user.password : dummyHash;
 
     const isValid = await bcrypt.compare(body.password, hashToCompare);
@@ -39,20 +40,65 @@ export async function authRoutes(fastify: FastifyInstance) {
       return reply.status(401).send({ error: 'Nieprawidłowy email lub hasło' });
     }
 
-    const token = fastify.jwt.sign({
+    const accessToken = fastify.jwt.sign({
       id: user.id,
       email: user.email,
       role: user.role,
       name: user.name,
-    }, { expiresIn: '12h' }); // Token expires in 12 hours
+    }, { expiresIn: '15m' }); // Krótki czas życia tokena dostępu
 
-    reply.setCookie('token', token, {
+    const refreshToken = fastify.jwt.sign({
+      id: user.id,
+    }, { expiresIn: '7d' }); // Dłuższy czas życia tokena odświeżania
+
+    reply.setCookie('accessToken', accessToken, {
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     });
 
+    reply.setCookie('refreshToken', refreshToken, {
+      path: '/auth/refresh',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
     return { user: { name: user.name, role: user.role } };
+  });
+
+  server.post('/auth/refresh', async (request, reply) => {
+    const token = request.cookies.refreshToken;
+    if (!token) {
+      return reply.status(401).send({ error: 'Brak tokenu odświeżania' });
+    }
+
+    try {
+      const decoded = fastify.jwt.verify<{ id: string }>(token);
+      const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+
+      if (!user) {
+        return reply.status(401).send({ error: 'Nieprawidłowy token' });
+      }
+
+      const newAccessToken = fastify.jwt.sign({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+      }, { expiresIn: '15m' });
+
+      reply.setCookie('accessToken', newAccessToken, {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+
+      return { success: true };
+    } catch (err) {
+      return reply.status(401).send({ error: 'Nieprawidłowy lub wygasły token odświeżania' });
+    }
   });
 }

@@ -32,7 +32,7 @@ if (!process.env.JWT_SECRET) {
 fastify.register(jwt, {
   secret: process.env.JWT_SECRET,
   cookie: {
-    cookieName: 'token',
+    cookieName: 'accessToken',
     signed: false
   }
 });
@@ -64,12 +64,6 @@ fastify.setErrorHandler((error, request, reply) => {
     return reply.status(error.statusCode).send({ error: error.message });
   }
 
-  // Fallback for old string-based errors (can be removed if all are migrated)
-  if (error.message === 'Brak dostępnych pokoi tego typu w wybranym terminie' || 
-      error.message === 'Liczba gości przekracza pojemność pokoju' ||
-      error.message === 'Wybrany typ pokoju nie istnieje') {
-    return reply.status(409).send({ error: error.message });
-  }
 
   if (error.code === 'P2025') {
     return reply.status(404).send({ error: 'Nie znaleziono rekordu w bazie danych.' });
