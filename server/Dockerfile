@@ -1,31 +1,37 @@
 # ETAP 1: Budowanie backendu
-FROM node:18-alpine AS builder
+FROM node:22.14.0-slim AS builder
 
 WORKDIR /app
+
+# Kopiowanie plików paczek i instalacja wszystkich zależności
 COPY package*.json ./
 RUN npm install
 
+# Kopiowanie folderu prisma i wygenerowanie klienta (ważne, by to było przed buildem)
 COPY prisma ./prisma/
 RUN npx prisma generate
 
+# Kopiowanie reszty plików i budowanie TypeScript do JavaScript
 COPY . .
 RUN npm run build
 
 # ETAP 2: Środowisko produkcyjne
-FROM node:18-alpine
+FROM node:22.14.0-slim
 
 WORKDIR /app
-COPY package*.json ./
-# Instalacja paczek produkcyjnych
-RUN npm install --omit=dev
 
-# Przekopiowanie zbudowanych plików oraz Prisma z etapu 1
+# Instalacja OpenSSL (często wymagana przez silnik Prisma na systemach Debian/Slim)
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+
+# Przekopiowanie zależności, zbudowanego kodu i plików Prismy
+# Kopiujemy całe node_modules, żeby mieć wygenerowanego klienta Prisma
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
-# Kopiowanie skryptu uruchomieniowego (opcjonalnie startujemy przez node)
 EXPOSE 3000
 
-# Push schematu bazy danych (SQLite dla wariantu prostego, Postgres dla zaawansowanego) i start
+# Push schematu bazy danych (SQLite dla wariantu prostego) i start serwera
 CMD npx prisma db push && npm run start
