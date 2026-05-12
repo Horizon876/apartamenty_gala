@@ -72,6 +72,24 @@ Dla Backendu:
 npm run dev
 ```
 
+## 🚀 Wdrożenie na Coolify (Produkcja)
+Ten projekt jest w pełni kompatybilny z self-hosted PaaS - **Coolify**. Został skonfigurowany pod architekturę kontenerową za pomocą `docker-compose.yml`.
+
+### Krok 1: Przygotowanie w Coolify
+1. W panelu Coolify dodaj nowe repozytorium przez opcję **"Add Resource" -> "Git Repository"**.
+2. Jako **Build Pack** wybierz **"Docker Compose"**.
+3. Coolify automatycznie wykryje plik `docker-compose.yml` znajdujący się w katalogu głównym.
+
+### Krok 2: Konfiguracja zmiennych środowiskowych
+W panelu środowisk (Environment Variables) danej aplikacji w Coolify, dodaj:
+- `JWT_SECRET` (wygeneruj silny klucz, np. używając `openssl rand -hex 32`)
+- `FRONTEND_URL` (główny adres URL pod którym będzie działać frontend, np. `https://apartamenty-gala.pl`)
+- (Opcjonalnie) `DATABASE_URL` – w domyślnym pliku Compose używana jest baza SQLite mapowana do wolumenu, co pozwala na uruchomienie aplikacji out-of-the-box. Jeśli chcesz podłączyć zewnętrzną bazę PostgreSQL z Coolify, ustaw ten adres.
+
+### Krok 3: Działanie konteneryzacji
+- **Frontend** zbuduje się z użyciem optymalizacji Vite, a następnie zostanie zaserwowany z wykorzystaniem lekkiego serwera **Nginx** z przygotowanym `nginx.conf` rozwiązującym błędy routingu SPA (React Router).
+- **Backend** (Fastify + Prisma) zainstaluje zależności, wygeneruje schemat i uruchomi proces `npx prisma db push` (aby zastosować schemat), po czym bezpiecznie wystartuje. Domyślnie używany jest wolumen chroniący plik `dev.db` przed skasowaniem przy restartach kontenera.
+
 ## Wytyczne dotyczące czystości kodu i Pull Requestów
 - Trzymaj się struktury modułowej tras Fastify.
 - Każdy endpoint powinien definiować schemat walidacji Zod - nie pozwól na `any` payload.
