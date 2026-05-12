@@ -2,8 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/db';
 
 const roomTypeSchema = z.object({
   name: z.string().max(100),

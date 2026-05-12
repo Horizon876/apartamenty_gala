@@ -1,10 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import bcrypt from 'bcrypt';
-import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-
-const prisma = new PrismaClient();
+import prisma from '../lib/db';
 
 const loginSchema = z.object({
   email: z.string().email().max(100),
@@ -20,7 +18,7 @@ export async function authRoutes(fastify: FastifyInstance) {
     },
     config: {
       rateLimit: {
-        max: 100,
+        max: 5,
         timeWindow: '1 minute'
       }
     }
@@ -31,13 +29,13 @@ export async function authRoutes(fastify: FastifyInstance) {
       where: { email: body.email },
     });
 
-    if (!user) {
-      return reply.status(401).send({ error: 'Nieprawidłowy email lub hasło' });
-    }
+    // Dummy hash (bcrypt.hashSync('dummy', 10)) aby zapobiec atakom timing (User Enumeration)
+    const dummyHash = '$2b$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    const hashToCompare = user ? user.password : dummyHash;
 
-    const isValid = await bcrypt.compare(body.password, user.password);
+    const isValid = await bcrypt.compare(body.password, hashToCompare);
 
-    if (!isValid) {
+    if (!user || !isValid) {
       return reply.status(401).send({ error: 'Nieprawidłowy email lub hasło' });
     }
 

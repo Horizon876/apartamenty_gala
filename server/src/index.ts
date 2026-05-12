@@ -9,9 +9,8 @@ import { serializerCompiler, validatorCompiler, ZodTypeProvider, hasZodFastifySc
 import { bookingRoutes } from './routes/bookings';
 import { authRoutes } from './routes/auth';
 import { adminRoutes } from './routes/admin';
-
-const prisma = new PrismaClient();
-
+import prisma from './lib/db';
+import { CustomError } from './utils/errors';
 const fastify = Fastify({
   logger: process.env.NODE_ENV === 'development' ? {
     transport: {
@@ -61,10 +60,19 @@ fastify.setErrorHandler((error, request, reply) => {
       details: error.validation
     });
   }
-  
+  if (error instanceof CustomError) {
+    return reply.status(error.statusCode).send({ error: error.message });
+  }
+
+  // Fallback for old string-based errors (can be removed if all are migrated)
   if (error.message === 'Brak dostępnych pokoi tego typu w wybranym terminie' || 
-      error.message === 'Liczba gości przekracza pojemność pokoju') {
+      error.message === 'Liczba gości przekracza pojemność pokoju' ||
+      error.message === 'Wybrany typ pokoju nie istnieje') {
     return reply.status(409).send({ error: error.message });
+  }
+
+  if (error.code === 'P2025') {
+    return reply.status(404).send({ error: 'Nie znaleziono rekordu w bazie danych.' });
   }
 
   if (error.code && error.code.startsWith('P2')) {
@@ -87,7 +95,8 @@ fastify.register(adminRoutes);
 // Uruchomienie serwera
 const start = async () => {
   try {
-    const PORT = 3000;
+    const PORT = parseInt(process.env.PORT || '3000');
+
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`🚀 Serwer działa na http://localhost:${PORT}`);
   } catch (err) {

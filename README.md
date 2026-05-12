@@ -1,67 +1,83 @@
-# Apartamenty Gala - Rudnik
+# Apartamenty Gala - System Rezerwacji i Zarządzania
 
-Ekskluzywna strona internetowa dla **Apartamenty Gala** w Rudniku. Nowoczesny, minimalistyczny design typu "Modern Classic" stworzony z myślą o segmencie premium.
+Nowoczesny, w pełni funkcjonalny system do rezerwacji apartamentów i zarządzania nimi od strony recepcji. Aplikacja składa się z backendu opartego na Fastify i Prisma oraz dynamicznego frontendu napisanego w React (Vite). Całość została zaprojektowana z myślą o wysokiej wydajności, bezpieczeństwie i niezawodności.
 
-## 🚀 Technologia
+## Architektura i Stack Technologiczny
 
-Strona została zbudowana przy użyciu najnowocześniejszych rozwiązań webowych:
+### Backend (Katalog `/server`)
+- **Framework:** [Fastify](https://www.fastify.io/) - wybrany ze względu na niskie opóźnienia i wysoką przepustowość.
+- **Baza danych:** PostgreSQL (wersja deweloperska korzysta z SQLite) obsługiwana przez **Prisma ORM**.
+- **Walidacja danych:** `zod` zintegrowany bezpośrednio z Fastify (poprzez `fastify-type-provider-zod`).
+- **Autoryzacja i Sesje:** JWT zapisywane w ciasteczkach (`HttpOnly`, `secure`, `sameSite: strict`).
+- **Bezpieczeństwo:** `fastify-helmet`, `fastify-rate-limit`, ochrona przed atakami Timing (dummy hashe), CORS z restrykcyjnymi ustawieniami.
+- **Transakcje:** Ścisła izolacja transakcji (Serializable) z wbudowanym mechanizmem ponawiania (retry loop) zabezpieczającym przed zjawiskiem Race Condition podczas rezerwacji tego samego pokoju.
 
-- **React 19** – Główny framework UI.
-- **Vite** – Błyskawiczne środowisko deweloperskie i build tool.
-- **Tailwind CSS 4** – Nowoczesne, wydajne stylowanie oparte na tokenach.
-- **Framer Motion** – Płynne, responsywne animacje (scroll-triggered).
-- **Lucide React** – Lekki i spójny zestaw ikon.
-- **React Router 7** – Zaawansowana nawigacja i routing.
+### Frontend
+- **Framework:** React + Vite
+- **Narzędzia UI:** Tailwind CSS, Framer Motion (do płynnych animacji).
+- **Zarządzanie stanem:** Context API / React Hooks.
+- **Routing:** React Router DOM.
+- **Moduły:**
+  - Panel Klienta: Przeglądanie dostępności pokoi, formularz rezerwacyjny, galeria.
+  - Panel Recepcji (Admin): Moduł zarządzania rezerwacjami, statusami (Check-in/Check-out), pokojami, zabezpieczony uwierzytelnianiem i kontrolą dostępu (RBAC).
 
-## ✨ Kluczowe Funkcje
+## Najważniejsze Funkcjonalności
+1. **Rezerwacje w czasie rzeczywistym:** Bezpieczne sprawdzanie pojemności, unikanie podwójnych rezerwacji (Double Booking) za sprawą transakcji.
+2. **Globalny Error Handling:** Scentralizowany system obsługi błędów bazujący na klasach (np. `BadRequestError`, `ConflictError`). Eliminacja wycieków informacji o strukturze bazy poprzez maskowanie kodów błędów Prisma.
+3. **Singleton Pattern dla Bazy:** Optymalizacja zużycia połączeń do bazy (Connection Pool) poprzez pojedynczą instancję `PrismaClient`.
+4. **Zarządzanie Typami Pokoi:** Pełny CRUD obsługiwany z panelu administracyjnego z walidacją wejścia za pomocą Zod.
 
-- **Premium Design** – Asymetryczne układy, elegancka typografia i wyselekcjonowana paleta barw (kremy, bordo).
-- **Responsywność** – Pełna optymalizacja pod urządzenia mobilne, tablety i desktopy.
-- **Sekcje tematyczne**:
-    - Ekskluzywny Hero z dynamiczną typografią.
-    - Sekcja "O nas" prezentująca historię i walory obiektu.
-    - Przegląd luksusowych pokoi i apartamentów.
-    - Oferta imprez okolicznościowych i konferencji.
-    - Galeria zdjęć wysokiej jakości.
-    - Interaktywny moduł kontaktowy z mapą.
-- **SEO & Performance** – Optymalizacja pod kątem wyszukiwarek i szybkości ładowania (Core Web Vitals).
+## Uruchomienie projektu lokalnie
 
-## 🛠️ Instalacja i Uruchomienie
+### Wymagania
+- Node.js (v18+)
+- Zmienne środowiskowe: Skopiuj `.env.example` do `.env` w folderze `/server` i wypełnij (np. `JWT_SECRET`, `DATABASE_URL`).
 
-1. **Sklonuj repozytorium**:
+### Instalacja
+1. Sklonuj repozytorium:
    ```bash
-   git clone [url-repozytorium]
+   git clone <url_repozytorium>
    cd apartamenty-gala
    ```
 
-2. **Zainstaluj zależności**:
+2. Zainstaluj zależności:
    ```bash
+   # W głównym katalogu (Frontend)
+   npm install
+
+   # W katalogu /server (Backend)
+   cd server
    npm install
    ```
 
-3. **Uruchom serwer deweloperski**:
+3. Skonfiguruj bazę danych:
    ```bash
-   npm run dev
+   cd server
+   npx prisma generate
+   npx prisma db push
+   # Opcjonalnie wgraj dane testowe:
+   # npm run seed
    ```
 
-4. **Budowanie wersji produkcyjnej**:
-   ```bash
-   npm run build
-   ```
-
-## 📸 Optymalizacja Mediów
-
-Projekt zawiera autorski skrypt `optimize-images.js` oparty na bibliotece **Sharp**, który automatycznie konwertuje obrazy JPG/PNG do nowoczesnego formatu **WebP**, znacząco redukując wagę strony bez utraty jakości.
-
-Aby zoptymalizować nowe zdjęcia:
+### Uruchomienie deweloperskie
+Dla Frontendu:
 ```bash
-node optimize-images.js
+# W katalogu głównym
+npm run dev
 ```
 
-## ✒️ Autorzy i Design
+Dla Backendu:
+```bash
+# W katalogu /server
+npm run dev
+```
 
-- **Design & Realizacja**: web2sell
-- **Lokalizacja**: Rudnik, Małopolska
+## Wytyczne dotyczące czystości kodu i Pull Requestów
+- Trzymaj się struktury modułowej tras Fastify.
+- Każdy endpoint powinien definiować schemat walidacji Zod - nie pozwól na `any` payload.
+- Błędy biznesowe rzucaj poprzez instancje z `utils/errors.ts` (`throw new BadRequestError(...)`), a `fastify.setErrorHandler` sam ułoży z tego właściwy kod HTTP (400, 404, 409).
+- Zwróć uwagę na bezpieczeństwo: rate limiting, walidacja wejścia, brak wycieków wrażliwych informacji.
 
 ---
-© 2026 Hotel Gala. Wszystkie prawa zastrzeżone.
+
+*Zbudowane z myślą o najlepszych praktykach. W razie problemów sprawdź logi Prisma lub Fastify, które w trybie dev sformatowane są za pomocą `pino-pretty`.*
