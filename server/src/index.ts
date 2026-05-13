@@ -38,10 +38,12 @@ fastify.register(jwt, {
 fastify.register(cookie);
 fastify.register(rateLimit, { global: true, max: 100, timeWindow: '1 minute' });
 
-// Wymuszony CORS otwarty na oścież dla produkcji
+// Najbardziej agresywne ustawienie CORS - wpuszcza wszystko
 fastify.register(cors, {
-  origin: true, 
-  credentials: true
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  credentials: false // Przy origin: "*" credentials musi być false
 });
 
 // Uproszczony Error Handler, żeby na pewno sam nie powodował błędów
