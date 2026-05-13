@@ -20,7 +20,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://admin:supertajnehaslo123@db:5432/apartamentydb?schema=public
       - JWT_SECRET=${JWT_SECRET:-super-secret-key-12345}
-      - PORT=80   
+      - PORT=3000  
       - NODE_ENV=production
       - FRONTEND_URL=http://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io
     depends_on:
