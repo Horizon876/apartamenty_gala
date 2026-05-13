@@ -22,7 +22,7 @@ const fastify = Fastify({
 fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
 
-// Wyłączamy niektóre nagłówki helmet, które mogą blokować działanie na HTTP/sslip.io
+// Wyłączamy niektóre nagłówki helmet, które mogą blokować działanie na subdomenach sslip.io
 fastify.register(helmet, {
   contentSecurityPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -42,21 +42,21 @@ fastify.register(jwt, {
   }
 });
 
-// KONFIGURACJA CIASTECZEK POD HTTP
+// KONFIGURACJA CIASTECZEK POD HTTPS
 fastify.register(cookie, {
   parseOptions: {
     path: '/',
-    secure: false,   // Bardzo ważne dla HTTP (nie HTTPS)
+    secure: true,    // TERAZ TRUE, BO MAMY HTTPS!
     httpOnly: true,
-    sameSite: 'lax'  // Pozwala na przesyłanie między subdomenami
+    sameSite: 'none' // Kluczowe: pozwala przesyłać ciastko z backendu na frontend
   }
 });
 
 fastify.register(rateLimit, { global: true, max: 100, timeWindow: '1 minute' });
 
-// CORS - Precyzyjnie pod Twój frontend
+// CORS - Precyzyjnie pod Twój frontend NA HTTPS
 fastify.register(cors, {
-  origin: "http://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io",
+  origin: "https://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io", // Zmiana na https
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Accept"],
   credentials: true
@@ -70,7 +70,7 @@ fastify.setErrorHandler((error, request, reply) => {
 
 // Healthcheck dla Coolify
 fastify.get('/', async () => {
-  return { status: 'OK', message: 'Backend żyje!' };
+  return { status: 'OK', message: 'Backend żyje i ma się dobrze!' };
 });
 
 // Rejestracja ruterów
