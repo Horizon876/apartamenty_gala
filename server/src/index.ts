@@ -11,6 +11,7 @@ import { authRoutes } from './routes/auth';
 import { adminRoutes } from './routes/admin';
 import prisma from './lib/db';
 import { CustomError } from './utils/errors';
+
 const fastify = Fastify({
   logger: process.env.NODE_ENV === 'development' ? {
     transport: {
@@ -44,11 +45,12 @@ fastify.register(rateLimit, {
   timeWindow: '1 minute'
 });
 
-// Rejestracja CORS
+// Rejestracja CORS - WERSJA ODBLOKOWANA DLA COOLIFY
 fastify.register(cors, {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: function (origin, cb) {
+    // Akceptujemy każde żądanie (idealne na wdrożenie)
+    cb(null, true);
+  },
   credentials: true
 });
 
@@ -64,16 +66,18 @@ fastify.setErrorHandler((error, request, reply) => {
     return reply.status(error.statusCode).send({ error: error.message });
   }
 
+  // Uciszenie błędów TypeScripta dla error.code w tej konfiguracji
+  const err = error as any;
 
-  if (error.code === 'P2025') {
+  if (err.code === 'P2025') {
     return reply.status(404).send({ error: 'Nie znaleziono rekordu w bazie danych.' });
   }
 
-  if (error.code && error.code.startsWith('P2')) {
+  if (err.code && typeof err.code === 'string' && err.code.startsWith('P2')) {
     return reply.status(400).send({ error: 'Błąd bazy danych (np. konflikt danych)' });
   }
 
-  if (error.statusCode === 429) {
+  if (err.statusCode === 429) {
     return reply.status(429).send({ error: 'Zbyt wiele żądań, spróbuj ponownie później.' });
   }
 
@@ -92,7 +96,7 @@ const start = async () => {
     const PORT = parseInt(process.env.PORT || '3000');
 
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
-    console.log(`🚀 Serwer działa na http://localhost:${PORT}`);
+    console.log(`🚀 Serwer działa na port: ${PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
@@ -101,11 +105,3 @@ const start = async () => {
 
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
   process.on(signal, async () => {
-    fastify.log.info(`Zatrzymywanie serwera z powodu ${signal}`);
-    await fastify.close();
-    await prisma.$disconnect();
-    process.exit(0);
-  });
-});
-
-start();
