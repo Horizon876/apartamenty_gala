@@ -94,10 +94,11 @@ fastify.register(adminRoutes);
 const start = async () => {
   try {
     const PORT = parseInt(process.env.PORT || '3000');
-
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`🚀 Serwer działa na port: ${PORT}`);
   } catch (err) {
+    // DODAJEMY TĘ LINIJKĘ PONIŻEJ:
+    console.error("FATALNY BŁĄD STARTU SERWERA:", err);
     fastify.log.error(err);
     process.exit(1);
   }
