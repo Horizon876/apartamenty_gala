@@ -23,9 +23,12 @@ services:
       - PORT=3000  
       - NODE_ENV=production
       - FRONTEND_URL=http://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io
+    ports:
+      - "3000"
     depends_on:
       - db
     restart: unless-stopped
+
   # 3. Twój frontend
   frontend:
     build:
