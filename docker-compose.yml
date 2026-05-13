@@ -1,36 +1,18 @@
 version: '3.8'
 
 services:
-  # Baza danych PostgreSQL (opcjonalnie, jeśli nie używasz wbudowanego SQLite / bazy z Coolify)
-  # db:
-  #   image: postgres:15-alpine
-  #   environment:
-  #     POSTGRES_USER: admin
-  #     POSTGRES_PASSWORD: adminpassword
-  #     POSTGRES_DB: apartamenty
-  #   volumes:
-  #     - db_data:/var/lib/postgresql/data
-  #   restart: unless-stopped
-
   backend:
     build:
       context: ./server
       dockerfile: Dockerfile
-    # Jeśli korzystasz z PostgreSQL odkomentuj:
-    # depends_on:
-    #   - db
     environment:
-      # Przykład dla SQLite: file:./dev.db
-      # Przykład dla PostgreSQL: postgresql://admin:adminpassword@db:5432/apartamenty?schema=public
       - DATABASE_URL=file:./dev.db
       - JWT_SECRET=${JWT_SECRET:-super-secret-key-12345}
       - PORT=3000
       - NODE_ENV=production
-      - FRONTEND_URL=https://twoja-domena.pl # Zmień to na domenę po wdrożeniu
-    ports:
-      - "3000:3000"
+      - FRONTEND_URL=https://twoja-domena.pl # Zmień to potem na domenę po wdrożeniu
+    # UWAGA: Usunięto sekcję ports. Coolify samo połączy się po porcie 3000.
     volumes:
-      # Wolumen na bazę SQLite, aby przetrwała restarty. Przy PostgreSQL można pominąć.
       - sqlite_data:/app/prisma
     restart: unless-stopped
 
@@ -38,12 +20,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
+    # UWAGA: Usunięto sekcję ports. Coolify samo połączy się po porcie 80.
     restart: unless-stopped
     depends_on:
       - backend
 
 volumes:
   sqlite_data:
-  # db_data:
