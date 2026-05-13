@@ -15,16 +15,20 @@ import { adminRoutes } from './routes/admin';
 import prisma from './lib/db';
 
 const fastify = Fastify({
-  logger: true // Wymuszamy logowanie wszystkiego
+  logger: true 
 }).withTypeProvider<ZodTypeProvider>();
 
 // Konfiguracja Zod
 fastify.setValidatorCompiler(validatorCompiler);
 fastify.setSerializerCompiler(serializerCompiler);
 
-fastify.register(helmet);
+// Wyłączamy niektóre nagłówki helmet, które mogą blokować działanie na HTTP/sslip.io
+fastify.register(helmet, {
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+});
 
-// Bezpieczeństwo JWT z twardym sprawdzeniem
+// Bezpieczeństwo JWT
 if (!process.env.JWT_SECRET) {
   console.error("❌ BŁĄD KRYTYCZNY: BRAK JWT_SECRET!");
   process.exit(1);
@@ -32,13 +36,25 @@ if (!process.env.JWT_SECRET) {
 
 fastify.register(jwt, {
   secret: process.env.JWT_SECRET,
-  cookie: { cookieName: 'accessToken', signed: false }
+  cookie: { 
+    cookieName: 'accessToken', 
+    signed: false 
+  }
 });
 
-fastify.register(cookie);
+// KONFIGURACJA CIASTECZEK POD HTTP
+fastify.register(cookie, {
+  parseOptions: {
+    path: '/',
+    secure: false,   // Bardzo ważne dla HTTP (nie HTTPS)
+    httpOnly: true,
+    sameSite: 'lax'  // Pozwala na przesyłanie między subdomenami
+  }
+});
+
 fastify.register(rateLimit, { global: true, max: 100, timeWindow: '1 minute' });
 
-// POPRAWIONY CORS - Wersja precyzyjna dla Twojego frontendu w Coolify
+// CORS - Precyzyjnie pod Twój frontend
 fastify.register(cors, {
   origin: "http://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -46,15 +62,15 @@ fastify.register(cors, {
   credentials: true
 });
 
-// Uproszczony Error Handler, żeby na pewno sam nie powodował błędów
+// Error Handler
 fastify.setErrorHandler((error, request, reply) => {
   console.error("❌ Złapano błąd:", error);
   return reply.status(500).send({ error: 'Wystąpił błąd serwera', details: error.message });
 });
 
-// BARDZO WAŻNE: Ścieżka zdrowia (Healthcheck) dla Coolify
+// Healthcheck dla Coolify
 fastify.get('/', async () => {
-  return { status: 'OK', message: 'Backend żyje i ma się dobrze!' };
+  return { status: 'OK', message: 'Backend żyje!' };
 });
 
 // Rejestracja ruterów
@@ -64,12 +80,9 @@ fastify.register(adminRoutes);
 
 const start = async () => {
   try {
-    console.log("=== PRÓBA URUCHOMIENIA NASŁUCHIWANIA ===");
     const PORT = parseInt(process.env.PORT || '3000');
-    
     await fastify.listen({ port: PORT, host: '0.0.0.0' });
     console.log(`🚀🚀🚀 SERWER DZIAŁA NA PORCIE: ${PORT} 🚀🚀🚀`);
-    
   } catch (err) {
     console.error("❌ FATALNY BŁĄD STARTU SERWERA:", err);
     process.exit(1);
@@ -78,7 +91,6 @@ const start = async () => {
 
 ['SIGINT', 'SIGTERM'].forEach((signal) => {
   process.on(signal, async () => {
-    console.log(`Zatrzymywanie serwera z powodu ${signal}`);
     await fastify.close();
     await prisma.$disconnect();
     process.exit(0);
