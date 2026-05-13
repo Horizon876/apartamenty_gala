@@ -23,7 +23,7 @@ services:
       - PORT=3000  
       - NODE_ENV=production
       # Tu wpisałem nową domenę frontendu (ni1b...) dla CORS
-      - FRONTEND_URL=http://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io
+      - FRONTEND_URL=https://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io
     ports:
       - "3000"
     depends_on:
@@ -37,9 +37,9 @@ services:
       dockerfile: Dockerfile
       args:
         # Przekazujemy nową domenę backendu do budowania Vite
-        - VITE_API_URL=http://swbf3xc5rvmxn5h0x8wmodxe.51.83.197.19.sslip.io
+        - VITE_API_URL=https://swbf3xc5rvmxn5h0x8wmodxe.51.83.197.19.sslip.io
     environment:
-      - VITE_API_URL=http://swbf3xc5rvmxn5h0x8wmodxe.51.83.197.19.sslip.io
+      - VITE_API_URL=https://swbf3xc5rvmxn5h0x8wmodxe.51.83.197.19.sslip.io
     depends_on:
       - backend
     restart: unless-stopped
