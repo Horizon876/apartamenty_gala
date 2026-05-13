@@ -45,11 +45,11 @@ export async function authRoutes(fastify: FastifyInstance) {
       email: user.email,
       role: user.role,
       name: user.name,
-    }, { expiresIn: '15m' }); // Krótki czas życia tokena dostępu
+    } as any, { expiresIn: '15m' }); // Krótki czas życia tokena dostępu
 
     const refreshToken = fastify.jwt.sign({
       id: user.id,
-    }, { expiresIn: '7d' }); // Dłuższy czas życia tokena odświeżania
+    } as any, { expiresIn: '7d' }); // Dłuższy czas życia tokena odświeżania
 
     reply.setCookie('accessToken', accessToken, {
       path: '/',
@@ -87,7 +87,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         email: user.email,
         role: user.role,
         name: user.name,
-      }, { expiresIn: '15m' });
+      } as any, { expiresIn: '15m' });
 
       reply.setCookie('accessToken', newAccessToken, {
         path: '/',
