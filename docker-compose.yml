@@ -1,29 +1,41 @@
 version: '3.8'
 
 services:
+  # 1. Nasz nowy serwer bazy danych PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: supertajnehaslo123
+      POSTGRES_DB: apartamentydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # 2. Twój backend
   backend:
     build:
       context: ./server
       dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=file:./dev.db
+      # Link do bazy danych (łączy się z kontenerem 'db' po haśle podanym wyżej)
+      - DATABASE_URL=postgresql://admin:supertajnehaslo123@db:5432/apartamentydb?schema=public
       - JWT_SECRET=${JWT_SECRET:-super-secret-key-12345}
       - PORT=3000
       - NODE_ENV=production
-      - FRONTEND_URL=https://twoja-domena.pl # Zmień to potem na domenę po wdrożeniu
-    # UWAGA: Usunięto sekcję ports. Coolify samo połączy się po porcie 3000.
-    volumes:
-      - sqlite_data:/app/prisma
+      - FRONTEND_URL=https://twoja-domena.pl # Zmień to na domenę po wdrożeniu
+    depends_on:
+      - db
     restart: unless-stopped
 
+  # 3. Twój frontend
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    # UWAGA: Usunięto sekcję ports. Coolify samo połączy się po porcie 80.
-    restart: unless-stopped
     depends_on:
       - backend
+    restart: unless-stopped
 
 volumes:
-  sqlite_data:
+  postgres_data:
