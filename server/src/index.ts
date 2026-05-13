@@ -38,12 +38,12 @@ fastify.register(jwt, {
 fastify.register(cookie);
 fastify.register(rateLimit, { global: true, max: 100, timeWindow: '1 minute' });
 
-// Najbardziej agresywne ustawienie CORS - wpuszcza wszystko
+// POPRAWIONY CORS - Wersja precyzyjna dla Twojego frontendu w Coolify
 fastify.register(cors, {
-  origin: "*",
+  origin: "http://ni1b367d4m65frdl5c81447i.51.83.197.19.sslip.io",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-  credentials: false // Przy origin: "*" credentials musi być false
+  credentials: true
 });
 
 // Uproszczony Error Handler, żeby na pewno sam nie powodował błędów
